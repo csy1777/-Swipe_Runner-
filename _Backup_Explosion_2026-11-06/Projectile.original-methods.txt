@@ -1,0 +1,41 @@
+/// 说明：这是 Projectile.cs 里被修改的两个方法的【原始版本】。
+/// 如果需要回退，把下面两段整段替换回 Projectile.cs 对应位置即可。
+
+        private void TryAttack()
+        {
+            Vector3 movement = transform.position - previousPosition;
+
+            if (movement.sqrMagnitude > 0.0001f)
+            {
+                float distance = movement.magnitude;
+
+#if UNITY_EDITOR
+                debugDistance = distance;
+                debugPreviousPosition = previousPosition;
+#endif
+                if (Physics.SphereCast(previousPosition, config.sphereCastRadius, flyDirection, out RaycastHit hit, distance, layerMask, QueryTriggerInteraction.Collide))
+                {
+                    HandleAttack(hit.collider);
+                }
+                else
+                {
+                    // Fallback if the target is too close and SphereCast did not work
+                    int hitsCount = Physics.OverlapSphereNonAlloc(transform.position, config.sphereCastRadius, overlapResults, layerMask, QueryTriggerInteraction.Collide);
+                    if (hitsCount > 0)
+                    {
+                        HandleAttack(overlapResults[0]);
+                    }
+                }
+            }
+
+            previousPosition = transform.position;
+        }
+
+        private void HandleAttack(Collider hit)
+        {
+            if (hit.TryGetComponent<IHealth>(out var healthHandler) && IsVisible(hit.transform.position))
+            {
+                Attack(healthHandler);
+                ReturnToPool();
+            }
+        }

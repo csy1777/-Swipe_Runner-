@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fca86f8e4cb334542aa44503badbbab3, type: 3}
+  m_Name: SO_GameplayAssetsConfig
+  m_EditorClassIdentifier: 
+  damagePopupPrefab: {fileID: 6224250470923878182, guid: 0ed1a102c64ca784aa3b317b72bbd5e4, type: 3}
+  initialDamagePopupPoolCount: 10
+  enemyKillRewardTextPrefab: {fileID: 3929909085539072666, guid: d69b227d199c20343ad7189b6c5f79fc, type: 3}
+  initialEnemyKillRewardTextPoolCount: 10
+  enemyPrefab: {fileID: 7364151761442723817, guid: cde975fb19b396940a6c7ee8d2164912, type: 3}
+  initialEnemyPoolCount: 80
+  tentaclePrefab: {fileID: 2327398140655775784, guid: 64ab7b1c33fbd634eb4516a89c3d8835, type: 3}
+  initialTentaclePoolCount: 20
+  projectilePrefab: {fileID: 3052017990892103383, guid: a8168770fa57f274d89b2eb6ab0cbfc2, type: 3}
+  initialProjectilePoolCount: 20
+  curtainPrefab: {fileID: 222973177675180321, guid: 5ef02fe6e4f90734d80badb9e6921a51, type: 3}
+  partPrefab: {fileID: 2408884176547785915, guid: 6cf7fe1495fde324da1fc2be938d2ea7, type: 3}
+  audioMixer: {fileID: 24100000, guid: c9849dc3290d3a44e8f6205ceacc63e7, type: 2}
+  unityAdListener: {fileID: 2984837191904884306, guid: f05b80011c64ab643b65b57e8ea648c9, type: 3}

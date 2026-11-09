@@ -1,0 +1,16 @@
+using UnityEngine;
+
+namespace KrolStudio
+{
+    [CreateAssetMenu(fileName = "ProjectileConfig", menuName = "Configs/ProjectileConfig")]
+    public class ProjectileConfig : ScriptableObject
+    {
+        public float flyTime = 10f;             // projectile lifetime (in seconds)
+        public float flySpeed = 15f;
+        public float sphereCastRadius = 0.1f;   // radius for collision check (SphereCast)
+
+        [Space]
+        public int baseDamage = 5;              // base damage at level 1
+        public float damageGrowthPerLevel = 5;  // damage increase per level
+    }
+}

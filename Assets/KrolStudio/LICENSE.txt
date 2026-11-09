@@ -1,0 +1,30 @@
+Third-Party Notices
+
+This package includes the following third-party component(s):
+
+• UniTask (https://github.com/Cysharp/UniTask)  
+  License: MIT (https://github.com/Cysharp/UniTask?tab=MIT-1-ov-file#readme)
+  Author: Yoshifumi Kawai / Cysharp, Inc.
+
+• Extenject (https://github.com/Mathijs-Bakker/Extenject)  
+  License: MIT (https://github.com/Mathijs-Bakker/Extenject?tab=MIT-1-ov-file#readme)
+  Author: Mathijs-Bakker
+
+• DOTween (https://dotween.demigiant.com)  
+  License: Artistic License (https://dotween.demigiant.com/license.php)
+  Author: Daniele Giardini
+
+• Rowdies Font
+  Author: Jaikishan Patel
+  Licensed under SIL Open Font License 1.1 (OFL-1.1)
+  https://scripts.sil.org/OFL
+
+• Lilita One Font
+  Author: Juan Montoreano
+  Licensed under SIL Open Font License 1.1 (OFL-1.1)
+  https://scripts.sil.org/OFL
+
+• Fredoka One Font
+  Author: Milena Brandão
+  Licensed under SIL Open Font License 1.1 (OFL‑1.1)
+  https://scripts.sil.org/OFL

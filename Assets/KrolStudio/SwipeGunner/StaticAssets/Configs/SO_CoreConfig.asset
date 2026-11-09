@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42cdc73322b4ec44f927f658ba3175e2, type: 3}
+  m_Name: SO_CoreConfig
+  m_EditorClassIdentifier: 
+  gameplayAssetsConfig: {fileID: 11400000, guid: c20f1a56cef7e564da712191c7823ad3, type: 2}
+  windowAssetsConfig: {fileID: 11400000, guid: 104e84a36c93dfd4ea149d99cc71c85f, type: 2}
+  levelListConfig: {fileID: 11400000, guid: 587e3477c36c3e742b38b3f1b00a1d53, type: 2}
+  projectileConfig: {fileID: 11400000, guid: 212fb835b81b8584dbfcfc8893466500, type: 2}
+  turretConfig: {fileID: 11400000, guid: 955466acde4335347978ec8a19f7c64c, type: 2}
+  enemyConfig: {fileID: 11400000, guid: a324d8b7c54f586429cc7cf672492686, type: 2}
+  playerConfig: {fileID: 11400000, guid: ac3c3efe682a0634f866056d51dfaa2b, type: 2}
+  rocketConfig: {fileID: 11400000, guid: fb905c2de01c1c444b1b684b3b3cacae, type: 2}
+  defaultPlayerProgress: {fileID: 11400000, guid: 4ed0d1fef328e7e4bb3ece9e28afaf9a, type: 2}
+  tentacleConfig: {fileID: 11400000, guid: 16397aa51801ff940b4060a66dafddc2, type: 2}
+  tutorialConfig: {fileID: 11400000, guid: 1b5090590f58d114590e4a276b7c9326, type: 2}
+  rewardConfig: {fileID: 11400000, guid: 663da94aa39e5d843b726740aceaaf25, type: 2}
+  partUpgradeLevelConfig: {fileID: 11400000, guid: 3747cf02f8ca28b48bf37c2114e9ec79, type: 2}
+  adsConfig: {fileID: 11400000, guid: 31a31ee168154214188c0a1718297438, type: 2}
+  fireModeConfig: {fileID: 11400000, guid: 7200d9410a40aed4fa3d25d2149143a4, type: 2}

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4bd3d726e7a0ae41a8d1520cded572e, type: 3}
+  m_Name: SO_ProjectileConfig
+  m_EditorClassIdentifier: 
+  flyTime: 4
+  flySpeed: 100
+  sphereCastRadius: 0.1
+  baseDamage: 5
+  damageGrowthPerLevel: 5
+  explosionRadius: 2
+  explosionDamageMultiplier: 0.5
+  explosionFalloff: 0.3
+  explosionAffectsDirectTarget: 0
+  explosionPrefab: {fileID: 5499723062653842392, guid: 1adecddcbc43fd840b18e4fc7eb7132c, type: 3}
+  explosionVfxLifetime: 1.2
+  burnDamagePerSecond: 10
+  burnDuration: 3
+  burnTickInterval: 0.5
+  burnVfxPrefab: {fileID: 5901450199181485960, guid: eb26c11544c67a84f96832874c058553, type: 3}
+  burnVfxHeight: 0.8

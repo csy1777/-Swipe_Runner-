@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/KrolStudio/SwipeGunner/StaticAssets/Scenes/Bootstrap.unity
+    guid: ec5b1ab91ceebcf4bbd0f67e4035ce29
+  - enabled: 1
+    path: Assets/KrolStudio/SwipeGunner/StaticAssets/Scenes/Level.unity
+    guid: 70f3b004bd09dd247add46cd982845e2
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: d72081bf544489648b6eb3a12fd66bfe, type: 2}
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  m_UseUCBPForAssetBundles: 0

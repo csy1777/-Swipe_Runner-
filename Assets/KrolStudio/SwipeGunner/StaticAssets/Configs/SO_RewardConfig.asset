@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1f180aaa2e13c74b82fda83dca57980, type: 3}
+  m_Name: SO_RewardConfig
+  m_EditorClassIdentifier: Assembly-CSharp::ArmorVehicle.RewardConfig
+  rewardSpritesByLevel:
+  - message: no rewards
+    rewardLevel: -1
+    reward: []
+  - message: max item levels +1
+    rewardLevel: 1
+    reward:
+    - {fileID: 21300000, guid: bddabb73968cc514180401489d5cbd6b, type: 3}
+    - {fileID: 21300000, guid: 9d9696f1823794f4b886147aa082f271, type: 3}
+    - {fileID: 21300000, guid: 82d52dbd45b5aa344809725ee422d505, type: 3}
+    - {fileID: 21300000, guid: 37fc4af8a8e99c94caec22d7357c2363, type: 3}
+    - {fileID: 21300000, guid: 669552c98c97caf43bf4a5f5042a0d10, type: 3}
+  - message: max item levels +1
+    rewardLevel: 2
+    reward:
+    - {fileID: 21300000, guid: bddabb73968cc514180401489d5cbd6b, type: 3}
+    - {fileID: 21300000, guid: ae07305590d2cdb47b4ce396df2f5205, type: 3}
+    - {fileID: 21300000, guid: f4c8d6cbe82ded445ac0a1c414c61e6f, type: 3}
+    - {fileID: 21300000, guid: aceb409f4a5edc04f9e34f6343280512, type: 3}
+    - {fileID: 21300000, guid: 024c93d17f50ca24f9be9b13e376aaa3, type: 3}
