@@ -18,6 +18,13 @@ namespace KrolStudio
         Vector3 SpawnPosition { get; set; }
         AudioManager AudioManager { get; }
 
+        /// <summary>
+        /// 是否处于冰冻状态。
+        /// 供 EnemyHealth 判断：冻结期间的伤害不要触发受击状态
+        /// （否则受击动画在 Animator.speed = 0 时永远播不完，敌人会卡在受击状态）。
+        /// </summary>
+        bool IsFrozen { get; }
+
         void EnableRagdoll(bool value);
         void Push(Transform playerTransform, float forceMagnitude);
         void Push(Vector3 direction, float forceMagnitude);
@@ -44,6 +51,9 @@ namespace KrolStudio
 
         Vector3 spawnPosition;
 
+        /// <summary>是否处于冰冻状态（由 FreezeEffect 通过 SetFrozen 控制）。</summary>
+        bool isFrozen;
+
         public event Action<Enemy> OnReturned;
         
         public IHealth Health => enemyHealth;
@@ -55,6 +65,7 @@ namespace KrolStudio
         public Enemy ThisEnemy => this;
         public EnemyAnimator Animator => enemyGraphicsContext.EnemyAnimator;
         public DamageFlashEffect DamageFlashEffect => enemyGraphicsContext.DamageFlashEffect;
+        public bool IsFrozen => isFrozen;
 
 
         [Inject]
@@ -85,6 +96,13 @@ namespace KrolStudio
         {
             gameObject.layer = LayerMask.NameToLayer(GameConstants.Gameplay.EnemyTag); // In EnemyDamageImpact, reset the layer for proper RocketLauncher functionality
 
+            // 池子复用：冻结状态必须在这里兜底复位。
+            // FreezeEffect.OnDisable 也会解冻，但那是另一个组件，不能保证执行顺序，
+            // 而且 Animator 在子物体上、不随 Enemy 重置，所以这里显式恢复一次。
+            isFrozen = false;
+            if (Animator != null)
+                Animator.SetSpeed(1f);
+
             enemyHealth.ResetHealth();
             healthBar.UpdateHealthInstant();
             healthBar.Hide();
@@ -98,7 +116,37 @@ namespace KrolStudio
 
         void Update()
         {
+            // 冻结期间不推进状态机：不移动、不转身、不看追击条件、不进攻击。
+            // 攻击伤害是靠动画事件触发的，而冻结时 Animator.speed = 0，事件不会触发，
+            // 所以"停状态机 + 停动画"两件事合起来才等于完全冻住。
+            //
+            // 条件里必须带 Current > 0：EnemyDeadState 也靠这个 Update 驱动
+            // （离开视野回收、玩家靠近时推一把），无条件早退会导致尸体永远留在场上。
+            if (isFrozen && enemyHealth.Current > 0)
+                return;
+
             enemyStateMachine.UpdateState();
+        }
+
+        /// <summary>
+        /// 冻结开关。冻结 = 停状态机推进 + 动画速度归零；解冻 = 恢复速度并让状态机继续跑。
+        ///
+        /// 解冻是"原地继续"而不是"回到初始状态"：
+        /// 敌人会从冻住那一刻的状态接着走（正在攻击就接着攻击），
+        /// 这样冻结更像"时间静止"，不会因为解冻而回满血或强制回 Idle。
+        /// </summary>
+        /// <param name="value">true = 冻结，false = 解冻</param>
+        public void SetFrozen(bool value)
+        {
+            // 幂等：重复调用不会产生副作用（FreezeEffect 里会重复调用来兜住边界情况）
+            if (isFrozen == value)
+                return;
+
+            isFrozen = value;
+
+            // 动画停了，攻击/受击/移动的表现就都停了
+            if (Animator != null)
+                Animator.SetSpeed(value ? 0f : 1f);
         }
 
         void IdleStateTransition()

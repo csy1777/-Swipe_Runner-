@@ -32,3 +32,6 @@ MonoBehaviour:
     - {fileID: 21300000, guid: f4c8d6cbe82ded445ac0a1c414c61e6f, type: 3}
     - {fileID: 21300000, guid: aceb409f4a5edc04f9e34f6343280512, type: 3}
     - {fileID: 21300000, guid: 024c93d17f50ca24f9be9b13e376aaa3, type: 3}
+  chipsPerLevelClear: 40
+  rewardLevelInterval: 5
+  rewardLevelChipsMultiplier: 2

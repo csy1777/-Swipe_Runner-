@@ -29,6 +29,17 @@ namespace KrolStudio
             Animator.enabled = value;
         }
 
+        /// <summary>
+        /// 设置动画播放速度。
+        /// 冰冻时设为 0：动画停在当前帧，挂在动画上的事件（例如攻击出手）也不会触发，
+        /// 所以"停住动画"本身就等于"停住攻击"，不需要在每个攻击状态里单独加判断。
+        /// </summary>
+        public void SetSpeed(float value)
+        {
+            if (this == null || Animator == null) return;
+            Animator.speed = value;
+        }
+
         public void PlayMovement(bool value)
         {
             if (this == null || Animator == null) return;

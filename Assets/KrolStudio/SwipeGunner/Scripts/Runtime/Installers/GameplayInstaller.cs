@@ -66,6 +66,10 @@ namespace KrolStudio
         private void BindUpgradeSystem()
         {
             Container.BindInterfacesAndSelfTo<UpgradeSystem>().AsSingle();
+
+            // 关卡结算（芯片奖励）。和关卡推进分开：奖励在 WinGameState 结算，
+            // 推进仍然是 CompleteWindow → IncrementLevelIndex。
+            Container.BindInterfacesAndSelfTo<LevelRewardService>().AsSingle();
         }
 
         private void BindAudioManager()

@@ -46,6 +46,11 @@ namespace KrolStudio
             Container.BindInterfacesTo<SaveLoadService>().AsSingle();
 
             Container.BindInterfacesTo<WalletService>().AsSingle();
+
+            // 本局子弹数值（局内 buff）。
+            // 必须放 ProjectContext：每关都会重载场景，局内 buff 要跨关保留；
+            // 失败时由 LoseGameState 调 Reset 清空。
+            Container.BindInterfacesAndSelfTo<RunBuffService>().AsSingle();
         }
     }
 }

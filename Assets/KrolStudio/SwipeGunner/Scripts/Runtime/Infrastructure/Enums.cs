@@ -43,6 +43,12 @@ namespace KrolStudio
     {
         None = 0,
         Coins = 1,
+
+        /// <summary>
+        /// 芯片：局内货币，用来在商店抽卡。
+        /// 存在 WalletService 里（自动进存档）；失败时返还 30%（阶段 6 实现）。
+        /// </summary>
+        Chips = 2,
     }
 
     public enum Side { Left, Right, Ahead }

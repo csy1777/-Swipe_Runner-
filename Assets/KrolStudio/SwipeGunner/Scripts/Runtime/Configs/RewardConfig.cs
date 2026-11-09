@@ -8,6 +8,16 @@ namespace KrolStudio
     {
         [SerializeField] List<RewardLevel> rewardSpritesByLevel;
 
+        [Header("Chips / 关卡结算")]
+        [Tooltip("每通关一关的芯片底薪。")]
+        public int chipsPerLevelClear = 40;
+
+        [Tooltip("每多少关算一次『奖励关』（5 = 第 5、10、15… 关）。0 = 关闭翻倍。")]
+        public int rewardLevelInterval = 5;
+
+        [Tooltip("奖励关的芯片倍率。")]
+        public float rewardLevelChipsMultiplier = 2f;
+
         private Dictionary<int, RewardLevel> lookup;
 
         /// <summary>

@@ -13,6 +13,7 @@ namespace KrolStudio
         private ProjectileConfig config;
         private ILogService logService;
         private IPlayerContext playerContext;
+        private IRunBuffService runBuffService;
         private Camera cam;
 
         private float flyTime;
@@ -36,11 +37,13 @@ namespace KrolStudio
         public void Construct(ProjectileConfig config, 
                               IPlayerContext playerContext, 
                               ILogService logService,
+                              IRunBuffService runBuffService,
                               [Inject(Id = "MainCamera")] Camera cam)
         {
             this.config = config;
             this.playerContext = playerContext;
             this.logService = logService;
+            this.runBuffService = runBuffService;
             this.cam = cam;
         }
 
@@ -127,33 +130,38 @@ namespace KrolStudio
         }
 
         /// <summary>
-        /// 处理命中：先对直接命中的目标造成普通伤害，再在命中点触发一次爆炸范围伤害。
+        /// 处理命中：先对直接命中的目标造成普通伤害，再把这次命中交给 BulletEffects。
+        ///
+        /// 这里【不】知道任何具体效果或范围的存在：
+        /// "打一个还是打一片"由 BulletEffects.ApplyShot 根据本局数值决定，
+        /// 爆炸/燃烧/冰冻都只是效果列表里的一项。
         /// </summary>
         /// <param name="hit">被击中的碰撞体</param>
-        /// <param name="point">命中点（爆炸中心）。SphereCast 时用 hit.point，兜底时用子弹位置。</param>
+        /// <param name="point">命中点（效果作用点，也是范围查询的圆心）。</param>
         private void HandleAttack(Collider hit, Vector3 point)
         {
             if (hit.TryGetComponent<IHealth>(out var healthHandler) && IsVisible(hit.transform.position))
             {
-                // 1) 直击伤害：保持原逻辑不变
-                Attack(healthHandler);
+                // 直击伤害：数值仍然来自玩家属性（零件等级决定），受击/死亡表现照旧
+                int damage = playerContext.PlayerStats.CurrentDamage;
 
-                // ==== [燃烧效果] 被直接命中的目标也会被点燃（范围内其他目标在 ImpactExplosion 里处理） ====
-                //BurnEffect.ApplyTo(healthHandler, config, this);
-                // ==== [燃烧效果] end ====
+                Attack(healthHandler, damage);
 
-                // ==== [爆炸效果] 开始 ====
-                // 2) 范围爆炸：对命中点半径内的其他敌人造成衰减伤害
-                //    爆炸伤害 = 当前子弹伤害 × 配置倍率（至少 1 点）
-                int splashDamage = Mathf.Max(1,
-                    Mathf.RoundToInt(playerContext.PlayerStats.CurrentDamage * config.explosionDamageMultiplier));
+                // ==== [子弹效果] ====
+                // 一次性结算：直击目标 +（如果有范围技能）范围内其他目标。
+                // 数值全部来自本局快照 RunBuffService.Stats，不再直接读 ProjectileConfig。
+                BulletEffectContext context = new BulletEffectContext(
+                    config,
+                    runBuffService.Stats,
+                    this,
+                    point,
+                    flyDirection,
+                    healthHandler,
+                    damage,
+                    true);
 
-                // 想完全关掉爆炸：注释掉下面这一行即可（其余代码不用动）
-                ImpactExplosion.Resolve(point, flyDirection, config, splashDamage, healthHandler, this);
-
-                // 如果压测时又出现引擎原生崩溃（一次炸死太多敌人），把上面这行换成：
-                // ImpactExplosion.ResolveDeferred(point, flyDirection, config, splashDamage, healthHandler, this);
-                // ==== [爆炸效果] end ====
+                BulletEffects.ApplyShot(context);
+                // ==== [子弹效果] end ====
 
                 ReturnToPool();
             }
@@ -165,9 +173,9 @@ namespace KrolStudio
             return viewportPos.z > 0f && viewportPos.x >= 0f && viewportPos.x <= 1f && viewportPos.y >= 0f && viewportPos.y <= 1f;
         }
 
-        private void Attack(IHealth entity)
+        private void Attack(IHealth entity, int damage)
         {
-            entity.TakeDamage(playerContext.PlayerStats.CurrentDamage, this, new DamageDirectionEventArgs(playerContext.PlayerStats.CurrentDamage, transform.forward));
+            entity.TakeDamage(damage, this, new DamageDirectionEventArgs(damage, transform.forward));
         }
 
 
@@ -179,13 +187,14 @@ namespace KrolStudio
 
             DrawCapsule(debugPreviousPosition, flyDirection, debugDistance, config.sphereCastRadius);
 
-            // ==== [爆炸效果] 范围可视化：选中子弹时在 Scene 视图里画出爆炸半径，方便调参 ====
-            if (config.explosionRadius > 0f)
+            // ==== [范围伤害] 可视化：选中子弹时画出本局的范围半径，方便调参 ====
+            float aoeRadius = runBuffService != null ? runBuffService.Stats.AoeRadius : 0f;
+            if (aoeRadius > 0f)
             {
                 Gizmos.color = new Color(1f, 0.45f, 0f, 0.35f);
-                Gizmos.DrawSphere(transform.position, config.explosionRadius);
+                Gizmos.DrawSphere(transform.position, aoeRadius);
             }
-            // ==== [爆炸效果] end ====
+            // ==== [范围伤害] end ====
         }
 
         private void DrawCapsule(Vector3 start, Vector3 direction, float distance, float radius)

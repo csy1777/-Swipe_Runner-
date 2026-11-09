@@ -17,10 +17,10 @@ MonoBehaviour:
   sphereCastRadius: 0.1
   baseDamage: 5
   damageGrowthPerLevel: 5
-  explosionRadius: 2
+  aoeRadius: 2
+  explosionDirectExtra: 1
   explosionDamageMultiplier: 0.5
   explosionFalloff: 0.3
-  explosionAffectsDirectTarget: 0
   explosionPrefab: {fileID: 5499723062653842392, guid: 1adecddcbc43fd840b18e4fc7eb7132c, type: 3}
   explosionVfxLifetime: 1.2
   burnDamagePerSecond: 10
@@ -28,3 +28,5 @@ MonoBehaviour:
   burnTickInterval: 0.5
   burnVfxPrefab: {fileID: 5901450199181485960, guid: eb26c11544c67a84f96832874c058553, type: 3}
   burnVfxHeight: 0.8
+  freezeDuration: 1.5
+  freezeMaterial: {fileID: 2100000, guid: 4a9c1aa0370c5074ba2ee0b7e9880772, type: 2}

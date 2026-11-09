@@ -8,17 +8,27 @@ namespace KrolStudio
     /// 工作方式：
     ///   - 由子弹命中时调用 <see cref="ApplyTo"/> 挂到目标身上（同一个目标只挂一个）；
     ///   - 第一次施加时，把配置里的燃烧粒子实例化到目标身上（跟随目标移动）；
-    ///   - 之后每 <c>burnTickInterval</c> 秒对目标调用一次 <c>IHealth.TakeDamage</c>；
+    ///   - 之后每 <c>tickInterval</c> 秒对目标调用一次 <c>IHealth.TakeDamage</c>；
     ///   - 持续时间结束后销毁粒子并自我销毁；
     ///   - 目标被池子回收（SetActive(false)）时同样会清理，不会带到下一只怪身上。
+    ///
+    /// 数值来源：<see cref="BulletStats"/>（本局快照，会随卡牌变化），
+    /// 材质/粒子仍然取自 <see cref="ProjectileConfig"/>（不会变的资产）。
+    /// 施加时会把数值拷贝到自己身上，所以之后卡牌再变也不会影响已经点燃的目标。
     /// </summary>
     public class BurnEffect : MonoBehaviour
     {
         /// <summary>被点燃的目标（血量组件在敌人根节点上）。</summary>
         IHealth health;
 
-        /// <summary>子弹配置（燃烧的全部参数都从这里取）。</summary>
+        /// <summary>子弹配置（只用来取燃烧粒子预制体和高度）。</summary>
         ProjectileConfig config;
+
+        /// <summary>每秒燃烧伤害（施加时的快照）。</summary>
+        float damagePerSecond;
+
+        /// <summary>每隔多少秒跳一次伤害（施加时的快照）。</summary>
+        float tickInterval;
 
         /// <summary>距燃烧结束还剩多少秒。</summary>
         float remaining;
@@ -31,7 +41,7 @@ namespace KrolStudio
 
         /// <summary>挂在目标身上的燃烧粒子实例（没有配置预制体时为 null）。</summary>
         GameObject vfxInstance;
-        
+
 
         /// <summary>
         /// 当前是否正在执行"燃烧跳伤"。
@@ -40,17 +50,17 @@ namespace KrolStudio
         public static bool IsBurnTick { get; private set; }
 
         /// <summary>
-        /// 施加燃烧。重复命中时：刷新持续时间、dps 取较大值（不叠层），粒子不会重复生成。
+        /// 施加燃烧。重复命中时：刷新持续时间、数值取最新一次施加的（不叠层），粒子不会重复生成。
         /// </summary>
         /// <param name="target">目标血量组件</param>
-        /// <param name="config">子弹配置（提供 dps / 时长 / 跳伤间隔 / 粒子预制体）</param>
-        /// <param name="damageSource">伤害来源</param>
-        public static void ApplyTo(IHealth target, ProjectileConfig config, object damageSource)
+        /// <param name="context">本次命中的上下文（数值读 Stats，粒子预制体读 Config）</param>
+        public static void ApplyTo(IHealth target, in BulletEffectContext context)
         {
             // 目标已经死了 / 配置缺失 / 关闭了燃烧，直接忽略
             if (target == null || !target.IsAlive)
                 return;
-            if (config == null || config.burnDamagePerSecond <= 0f || config.burnDuration <= 0f)
+
+            if (context.Stats.BurnDamagePerSecond <= 0f || context.Stats.BurnDuration <= 0f)
                 return;
 
             // IHealth 的实现都是 MonoBehaviour，挂在敌人根节点上
@@ -63,17 +73,21 @@ namespace KrolStudio
             if (burn == null)
                 burn = component.gameObject.AddComponent<BurnEffect>();
 
-            burn.Setup(target, config, damageSource);
+            burn.Setup(target, context);
         }
 
-        void Setup(IHealth target, ProjectileConfig projectileConfig, object damageSource)
+        void Setup(IHealth target, in BulletEffectContext context)
         {
             health = target;
-            config = projectileConfig;
-            sender = damageSource;
+            config = context.Config;
+            sender = context.Sender;
 
-            // 重复命中：刷新时长（dps 用配置里的最新值，天然"取较大值"的效果由设计决定）
-            remaining = Mathf.Max(remaining, config.burnDuration);
+            // 把数值拷到自己身上：之后本局数值再变化，不影响已经点燃的目标
+            damagePerSecond = context.Stats.BurnDamagePerSecond;
+            tickInterval = context.Stats.BurnTickInterval;
+
+            // 重复命中：刷新时长（dps 用最新一次的值，天然"取较大值"的效果由设计决定）
+            remaining = Mathf.Max(remaining, context.Stats.BurnDuration);
 
             // 让第一次跳伤在下一帧立刻发生，命中反馈更直接
             if (tickTimer <= 0f)
@@ -86,7 +100,7 @@ namespace KrolStudio
         /// <summary>跳伤间隔，做一层保护避免配置成 0 导致每帧掉血。</summary>
         float GetTickInterval()
         {
-            return config.burnTickInterval > 0f ? config.burnTickInterval : 0.5f;
+            return tickInterval > 0f ? tickInterval : 0.5f;
         }
 
         void Update()
@@ -110,14 +124,14 @@ namespace KrolStudio
             remaining -= deltaTime;
             tickTimer += deltaTime;
 
-            float tickInterval = GetTickInterval();
+            float tick = GetTickInterval();
 
-            if (tickTimer >= tickInterval)
+            if (tickTimer >= tick)
             {
-                tickTimer -= tickInterval;
+                tickTimer -= tick;
 
                 // 每跳至少 1 点伤害，避免 dps * interval 取整后变成 0
-                int damage = Mathf.Max(1, Mathf.RoundToInt(config.burnDamagePerSecond * tickInterval));
+                int damage = Mathf.Max(1, Mathf.RoundToInt(damagePerSecond * tick));
 
                 // 走和普通伤害完全相同的入口：血条刷新、死亡、奖励都会正常触发
                 // IsBurnTick 只是告诉 EnemyHealth：这一次是燃烧跳伤，不要进受击状态

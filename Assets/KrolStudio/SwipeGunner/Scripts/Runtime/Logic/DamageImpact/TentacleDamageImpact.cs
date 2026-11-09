@@ -15,6 +15,7 @@ namespace KrolStudio
         ITentacleContext tentacleContext;
         UpgradeSystem upgradeSystem;
         TentacleStateMachine tentacleStateMachine;
+        TentacleConfig tentacleConfig;
 
         TentacleHealth enemyHealth;
 
@@ -25,13 +26,15 @@ namespace KrolStudio
                        IWalletService walletService,
                        ITentacleContext tentacleContext,
                        UpgradeSystem upgradeSystem,
-                       TentacleStateMachine tentacleStateMachine)
+                       TentacleStateMachine tentacleStateMachine,
+                       TentacleConfig tentacleConfig)
         {
             this.interactorPool = interactorPool;
             this.walletService = walletService;
             this.tentacleContext = tentacleContext;
             this.upgradeSystem = upgradeSystem;
             this.tentacleStateMachine = tentacleStateMachine;
+            this.tentacleConfig = tentacleConfig;
         }
 
         public override void Awake()
@@ -92,6 +95,11 @@ namespace KrolStudio
             interactorPool.GetPool<EnemyKillRewardText>().Get(healthBar.transform.position).Play(NumberFormatter.Format((int)killReward));
 
             walletService.AddAmount(CurrencyType.Coins, Mathf.RoundToInt(killReward * 10f));
+
+            // ==== [芯片] 击杀掉落（触手 / 精英） ====
+            // 精英怪给得比普通怪多（SO_TentacleConfig.chipsPerKill，默认 3）。
+            walletService.AddAmount(CurrencyType.Chips, tentacleConfig.chipsPerKill);
+            // ==== [芯片] end ====
 
             tentacleStateMachine.Enter<TentacleDeadState>().Forget();
         }

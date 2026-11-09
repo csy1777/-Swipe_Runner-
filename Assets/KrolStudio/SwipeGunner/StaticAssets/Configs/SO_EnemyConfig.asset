@@ -17,6 +17,7 @@ MonoBehaviour:
   baseDamage: 5
   baseReward: 10
   rewardGrowthPerLevel: 0.5
+  chipsPerKill: 1
   speed: 3.5
   rotationSpeed: 3
   walkingSpeed: 0.5

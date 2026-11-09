@@ -15,6 +15,10 @@ namespace KrolStudio
         public int baseReward = 10;
         public float rewardGrowthPerLevel = 0.5f;
 
+        [Header("Chips / 芯片")]
+        [Tooltip("击杀一只普通敌人掉多少芯片。")]
+        public int chipsPerKill = 1;
+
         [Space]
         public float speed = 3.5f;
         public float rotationSpeed = 3f;

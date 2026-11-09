@@ -116,7 +116,13 @@ namespace KrolStudio
             }
 
             walletService.AddAmount(CurrencyType.Coins, Mathf.RoundToInt(killReward * 10f));
-            
+
+            // ==== [芯片] 击杀掉落（普通怪） ====
+            // 芯片是局内货币：这里只负责加钱，失败返还 30% 由 LoseGameState 那一侧处理。
+            // 数量在 SO_EnemyConfig 里配，方便后面做"精英怪 +3"之类的差异化。
+            walletService.AddAmount(CurrencyType.Chips, enemyConfig.chipsPerKill);
+            // ==== [芯片] end ====
+
             enemyStateMachine.Enter<EnemyDeadState>().Forget();
         }
     }

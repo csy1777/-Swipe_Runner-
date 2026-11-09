@@ -36,7 +36,12 @@ namespace KrolStudio
             // EnemyHitState 找不到"上一个状态"可回，会一直卡在受击状态里。
             // 普通子弹伤害的行为不变（IsBurnTick 只会在燃烧跳伤的那一瞬间为 true）。
             // 如果确实想让燃烧也打断敌人：删掉 !BurnEffect.IsBurnTick 这个条件即可。
-            if (Current > 0 && !BurnEffect.IsBurnTick)
+            // ==== [冰冻效果] 开始 ====
+            // 冻结期间同样不能进受击状态：
+            // 冻结时 Animator.speed = 0，受击动画永远播不完，OnExitHitState 不会回调，
+            // 敌人会永久卡在 EnemyHitState（和燃烧 DoT 是同一个坑）。
+            // ==== [冰冻效果] end ====
+            if (Current > 0 && !BurnEffect.IsBurnTick && !enemyContext.IsFrozen)
                 stateMachine.Enter<EnemyHitState>().Forget();
             // ==== [燃烧效果] end ====
         }

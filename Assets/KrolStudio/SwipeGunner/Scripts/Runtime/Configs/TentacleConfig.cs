@@ -21,5 +21,9 @@ namespace KrolStudio
 
         [Space]
         public int baseDamage = 5;
+
+        [Header("Chips / 芯片")]
+        [Tooltip("击杀一只触手（精英）掉多少芯片。")]
+        public int chipsPerKill = 3;
     }
 }
